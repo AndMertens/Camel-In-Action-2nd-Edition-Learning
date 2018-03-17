@@ -28,7 +28,7 @@ public class OrderRouterWithRecipientListAnnotationTest extends CamelTestSupport
     @Test
     public void testPlacingOrders() throws Exception {
         getMockEndpoint("mock:accounting").expectedMessageCount(2);
-        getMockEndpoint("mock:production").expectedMessageCount(1);
+        getMockEndpoint("mock:production").expectedMessageCount(2);
         assertMockEndpointsSatisfied();
     }
     

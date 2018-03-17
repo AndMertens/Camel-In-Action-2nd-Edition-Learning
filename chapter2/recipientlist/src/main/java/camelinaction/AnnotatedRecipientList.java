@@ -22,6 +22,6 @@ public class AnnotatedRecipientList {
     }
 
     private boolean isGoldCustomer(String customer) {
-        return customer.equals("honda");
+        return "honda".equals(customer);
     }
 }
