@@ -26,8 +26,8 @@
   </route>
 
   <route>
-   <from uri="jms:incomingOrders" />
-   <to uri="mock:incomingOrders" />
+   <from uri="jms:{{myDest}}" />
+   <to uri="mock:{{myDest}}" />
   </route>  
  </camelContext>
 

@@ -24,12 +24,31 @@
 
   <bean id="downloadLogger" class="camelinaction.DownloadLogger"/>
 
-  <camelContext xmlns="http://camel.apache.org/schema/spring">
+  <camelContext
+    xmlns="http://camel.apache.org/schema/spring">
+    <packageScan>
+      <package>camelinaction.routes</package>
+      <excludes>**.*Test*</excludes>
+      <includes>**.*</includes>
+    </packageScan>
+  </camelContext>
+<!--  <camelContext xmlns="http://camel.apache.org/schema/spring">
     <route>
       <from uri="file:src/data?noop=true"/>
       <process ref="downloadLogger"/>
       <to uri="jms:incomingOrders"/>
     </route>
-  </camelContext>
+  </camelContext>-->
+
+<!--    <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <route>
+      <from uri="file:src/data?noop=true"/>
+      <to uri="jms:incomingOrders"/>
+    </route>
+    <route>
+      <from uri="jms:incomingOrder"/>
+      <process ref="downloadLogger" />
+    </route>
+  </camelContext>-->
 
 </beans>

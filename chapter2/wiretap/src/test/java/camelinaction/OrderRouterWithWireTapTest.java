@@ -28,38 +28,44 @@ public class OrderRouterWithWireTapTest extends CamelTestSupport {
     @Test
     public void testPlacingOrders() throws Exception {
         getMockEndpoint("mock:wiretap").expectedMessageCount(1);
-    	getMockEndpoint("mock:xml").expectedMessageCount(1);
-        getMockEndpoint("mock:csv").expectedMessageCount(0);
+    	getMockEndpoint("mock:xml").expectedMessageCount(0);
+        getMockEndpoint("mock:csv").expectedMessageCount(1);
         assertMockEndpointsSatisfied();
     }
     
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
+        final String incomingOrdersUri = "jms:incomingOrders";
+        final String orderAuditUri = "jms:orderAudit";
+        final String xmlOrdersUri = "jms:xmlOrders";
+        final String csvOrdersUri = "jms:csvOrders";
+
+
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
                 // load file orders from src/data into the JMS queue
-                from("file:src/data?noop=true").to("jms:incomingOrders");
+                from("file:src/data?noop=true").to(incomingOrdersUri);
         
                 // content-based router
-                from("jms:incomingOrders")
-                    .wireTap("jms:orderAudit")
+                from(incomingOrdersUri)
+                    .wireTap(orderAuditUri)
 	                .choice()
 	                    .when(header("CamelFileName").endsWith(".xml"))
-	                        .to("jms:xmlOrders")  
+	                        .to(xmlOrdersUri)
 	                    .when(header("CamelFileName").regex("^.*(csv|csl)$"))
-	                        .to("jms:csvOrders");     
+	                        .to(csvOrdersUri);
                 
                 // test that our route is working
-                from("jms:xmlOrders")
+                from(xmlOrdersUri)
 	                .log("Received XML order: ${header.CamelFileName}")
 	                .to("mock:xml");                
                 
-                from("jms:csvOrders")
+                from(csvOrdersUri)
 	                .log("Received CSV order: ${header.CamelFileName}")
 	                .to("mock:csv");
                 
-                from("jms:orderAudit")        
+                from(orderAuditUri)
 	                .log("Wire tap received order: ${header.CamelFileName}")
 	                .to("mock:wiretap");   
             }

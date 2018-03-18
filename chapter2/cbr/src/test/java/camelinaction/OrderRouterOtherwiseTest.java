@@ -28,8 +28,8 @@ public class OrderRouterOtherwiseTest extends CamelTestSupport {
     @Test
     public void testPlacingOrders() throws Exception {
         getMockEndpoint("mock:xml").expectedMessageCount(1);
-        getMockEndpoint("mock:csv").expectedMessageCount(2);
-        getMockEndpoint("mock:bad").expectedMessageCount(1);
+        getMockEndpoint("mock:csv").expectedMessageCount(1);
+        getMockEndpoint("mock:bad").expectedMessageCount(2);
         
         assertMockEndpointsSatisfied();
     }
@@ -50,7 +50,7 @@ public class OrderRouterOtherwiseTest extends CamelTestSupport {
                     .choice()
                         .when(header("CamelFileName").endsWith(".xml"))
                             .to("jms:xmlOrders")  
-                        .when(header("CamelFileName").regex("^.*(csv|csl)$"))
+                        .when(header("CamelFileName").endsWith(".csv"))
                             .to("jms:csvOrders")
                         .otherwise()
                             .to("jms:badOrders");

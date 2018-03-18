@@ -12,8 +12,8 @@ public class RouteBuilderExample {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                // try auto complete in your IDE on the line below
-
+                from("ftp://rider.com/orders?username=rider&password=secret")
+                        .to("jms:incomingOrders");
             }
         });
         context.start();
